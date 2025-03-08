@@ -18,10 +18,12 @@ const db = require("./config/mongooseConnnection.js");
 const authRoutes = require("./routes/authRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const canteenOwnerRoutes = require("./routes/canteenOwnerRoutes");
+const userRouter = require("./routes/userRoutes.js");
 
 app.use("/api/auth", authRoutes);
 app.use("/api", dashboardRoutes);
 app.use("/api/canteen", canteenOwnerRoutes);
+app.use("/api/user",userRouter)
 
 // Sample Route
 app.get("/", (req, res) => {

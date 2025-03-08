@@ -2,6 +2,7 @@ const FoodItem = require("../models/FoodItem");
 
 // Get all items uploaded by the canteen owner
 const getAllItems = async (req, res) => {
+    console.log("Fetching items for user ID:", req.user.id);  // Log the user ID
     try {
         const items = await FoodItem.find({ canteenOwner: req.user.id });
 
@@ -29,7 +30,7 @@ const uploadItem = async (req, res) => {
             return res.status(400).json({ message: "Name and price are required fields" });
         }
 
-        const imageUrl = `/uploads/${req.file.filename}`;
+        const imageUrl =  `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
 
         const newItem = new FoodItem({
             name,
