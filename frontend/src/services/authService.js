@@ -20,4 +20,3 @@ export const loginUser = async (loginData, role) => {
   
     return response;
   };
-  

@@ -3,15 +3,18 @@ const Order = require("../models/Order");
 const Subscription = require("../models/Subscription");
 
 // 1. Get All Food Items (with optional health/vegetarian filter)
-const getAllFoodItems = async (req, res) => {
+const getHealthyFood = async (req, res) => {
     try {
-        const { healthy, vegetarian } = req.query;
+        const { healthy = "true", vegetarian = "true" } = req.query;
 
         let filters = {};
-        if (healthy) filters.healthy = healthy === "true";
-        if (vegetarian) filters.vegetarian = vegetarian === "true";
+
+        // Filter based on healthy and vegetarian query parameters
+        if (healthy !== undefined) filters.healthy = healthy === "true";
+        if (vegetarian !== undefined) filters.vegetarian = vegetarian === "true";
 
         const foodItems = await FoodItem.find(filters);
+
         if (!foodItems.length) {
             return res.status(404).json({ message: "No food items found matching the filters." });
         }
@@ -113,17 +116,22 @@ const preOrderBooking = async (req, res) => {
 // 5. Subscribe to Meal Plan
 const subscribe = async (req, res) => {
     try {
-        const { plan } = req.body;
+        const { plan, months } = req.body;
 
-        // Validate plan selection
-        if (!plan) {
-            return res.status(400).json({ message: "Subscription plan is required." });
+        // Validate inputs
+        if (!plan || !months || months < 1) {
+            return res.status(400).json({ message: "Valid subscription plan and months are required." });
         }
+
+        const startDate = new Date();
+        const endDate = new Date();
+        endDate.setDate(startDate.getDate() + months * 30); // End date based on months
 
         const newSubscription = new Subscription({
             student: req.user.id,
             plan,
-            endDate: new Date(new Date().setMonth(new Date().getMonth() + 1)), // Set to 1 month from now
+            startDate,
+            endDate,
         });
 
         await newSubscription.save();
@@ -134,10 +142,28 @@ const subscribe = async (req, res) => {
     }
 };
 
+
+const  getAllFoodItems = async (req, res) => {
+    try {
+
+        const foodItems = await FoodItem.find();
+        if (!foodItems.length) {
+            return res.status(404).json({ message: "No food items found." });
+        }
+
+        res.status(200).json(foodItems);
+    } catch (error) {
+        console.error("Error fetching food items:", error);
+        res.status(500).json({ message: "Server error while fetching food items", error: error.message });
+    }
+};
+
+
 module.exports = {
     getAllFoodItems,
     placeOrder,
     getOrderHistory,
     preOrderBooking,
-    subscribe
+    subscribe,
+    getHealthyFood
 };

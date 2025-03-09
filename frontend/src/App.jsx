@@ -3,6 +3,9 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import StudentDashboard from "./pages/StudentDashboard";
 import CanteenDashboard from "./pages/CanteenDashboard";
+import React from "react";
+import Dashboard from "./pages/Dashboard";
+import Subscription from "./components/Subscription";
 
 function App() {
   return (
@@ -12,6 +15,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/student-dashboard" element={<StudentDashboard />} />
         <Route path="/canteen-dashboard" element={<CanteenDashboard />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/subscription" element={<Subscription />} />
       </Routes>
     </Router>
   );
